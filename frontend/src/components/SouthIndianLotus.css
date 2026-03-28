@@ -1,0 +1,401 @@
+/* ============================================================
+   LOTUS BLOOM — Template 2
+   Royal Purple + Gold + Lavender
+   ============================================================ */
+
+:root {
+  --sil-purple:      #6B3A6E;
+  --sil-purple-deep: #4A1F4D;
+  --sil-lavender:    #FBF0FF;
+  --sil-lavender-mid:#F0D8F5;
+}
+
+.sil-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  font-family: var(--font-body);
+}
+
+.sil {
+  position: relative;
+  background: var(--sil-lavender);
+  width: 100%;
+  max-width: 680px;
+  border: 5px solid var(--sil-purple);
+  box-shadow: 0 0 0 2px var(--gold), var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* ---- Corners ---- */
+.sil__corner {
+  position: absolute;
+  font-size: 1.6rem;
+  color: var(--gold);
+  z-index: 2;
+  line-height: 1;
+}
+.sil__corner--tl { top: 14px; left: 14px; }
+.sil__corner--tr { top: 14px; right: 14px; }
+.sil__corner--bl { bottom: 14px; left: 14px; }
+.sil__corner--br { bottom: 14px; right: 14px; }
+
+/* ---- Floral Band ---- */
+.sil__floral-band {
+  background: linear-gradient(90deg, var(--sil-purple-deep), var(--sil-purple), var(--sil-purple-deep));
+  overflow: hidden;
+  padding: 8px 0;
+}
+
+.sil__floral-text {
+  display: flex;
+  white-space: nowrap;
+  animation: marquee 20s linear infinite;
+  width: fit-content;
+}
+
+.sil__floral-text--reverse {
+  animation-direction: reverse;
+}
+
+.sil__floral-text span {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  color: var(--gold-light);
+  padding: 0 16px;
+}
+
+/* ---- Jasmine Line ---- */
+.sil__jasmine-line {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 0;
+  color: var(--sil-purple);
+  font-size: 0.9rem;
+  background: var(--sil-lavender-mid);
+  border-top: 1px solid rgba(107,58,110,0.2);
+  border-bottom: 1px solid rgba(107,58,110,0.2);
+  letter-spacing: 0.2em;
+}
+
+/* ---- Body ---- */
+.sil__body {
+  padding: 28px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Top / Lotus ---- */
+.sil__top {
+  text-align: center;
+}
+
+.sil__lotus-center {
+  margin: 0 auto 12px;
+}
+
+.sil__lotus-big {
+  font-size: 3.5rem;
+  color: var(--sil-purple);
+  animation: spin-slow 12s linear infinite;
+  display: inline-block;
+  filter: drop-shadow(0 0 8px rgba(107,58,110,0.4));
+}
+
+.sil__blessing {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--sil-purple);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.sil__blessing span {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: rgba(107,58,110,0.65);
+  font-style: normal;
+}
+
+/* ---- Event Name ---- */
+.sil__event-name {
+  text-align: center;
+}
+
+.sil__event-ornament {
+  font-size: 0.8rem;
+  color: var(--gold);
+  letter-spacing: 0.4em;
+  margin: 4px 0;
+}
+
+.sil__event-name h1 {
+  font-family: var(--font-accent);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  color: var(--sil-purple);
+  letter-spacing: 0.06em;
+  margin: 6px 0;
+}
+
+/* ---- Couple ---- */
+.sil__couple {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.sil__bride-block,
+.sil__groom-block {
+  text-align: center;
+}
+
+.sil__person-ring {
+  font-size: 1.5rem;
+  color: var(--gold);
+  margin-bottom: 8px;
+  animation: spin-slow 8s linear infinite;
+  display: inline-block;
+}
+
+.sil__person-label {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.sil__person-name {
+  font-family: var(--font-accent);
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  color: var(--sil-purple);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.sil__person-parents {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: rgba(107,58,110,0.65);
+  font-style: italic;
+}
+
+.sil__couple-sep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+}
+
+.sil__sep-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+}
+
+.sil__sep-heart {
+  font-size: 1.4rem;
+  color: var(--sil-purple);
+}
+
+/* ---- Divider ---- */
+.sil__divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--gold);
+  font-size: 0.9rem;
+}
+
+.sil__div-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ---- Event Cards ---- */
+.sil__event-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.sil__event-card {
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(107,58,110,0.25);
+  border-radius: 8px;
+  padding: 18px 20px;
+  text-align: center;
+  backdrop-filter: blur(4px);
+}
+
+.sil__event-card--reception {
+  background: rgba(107,58,110,0.06);
+}
+
+.sil__event-card-label {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--sil-purple);
+  margin-bottom: 10px;
+}
+
+.sil__event-card-date {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--sil-purple-deep);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.sil__event-card-time {
+  font-family: var(--font-accent);
+  font-size: 0.95rem;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.sil__event-card-venue {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  color: var(--sil-purple);
+  font-weight: 500;
+}
+
+.sil__event-card-addr {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: rgba(107,58,110,0.6);
+  font-style: italic;
+}
+
+/* ---- Pre-Wedding ---- */
+.sil__pre-wedding {
+  text-align: center;
+}
+
+.sil__pre-title {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sil-purple);
+  margin-bottom: 12px;
+}
+
+.sil__pre-events {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.sil__pre-event {
+  background: rgba(107,58,110,0.08);
+  border: 1px solid rgba(107,58,110,0.2);
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: rgba(107,58,110,0.8);
+}
+
+.sil__pre-event span {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--sil-purple);
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* ---- Note ---- */
+.sil__note {
+  text-align: center;
+  padding: 12px 20px;
+}
+
+.sil__note p {
+  font-family: var(--font-accent);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: rgba(107,58,110,0.7);
+  line-height: 1.6;
+}
+
+/* ---- RSVP ---- */
+.sil__rsvp {
+  text-align: center;
+  padding: 14px;
+  border: 1px solid rgba(107,58,110,0.25);
+  border-radius: 6px;
+  background: rgba(107,58,110,0.04);
+}
+
+.sil__rsvp-label {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sil-purple);
+  margin-bottom: 8px;
+}
+
+.sil__rsvp-contacts {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: rgba(107,58,110,0.75);
+}
+
+/* ---- Dress Code ---- */
+.sil__dress-code {
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: rgba(107,58,110,0.75);
+  font-style: italic;
+}
+
+.sil__dress-code span {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-style: normal;
+}
+
+/* ---- Footer ---- */
+.sil__footer {
+  text-align: center;
+  padding: 6px 0;
+}
+
+.sil__footer p {
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  font-style: italic;
+  color: rgba(107,58,110,0.6);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 560px) {
+  .sil__body { padding: 16px 18px; gap: 16px; }
+  .sil__couple { grid-template-columns: 1fr; }
+  .sil__couple-sep { flex-direction: row; }
+  .sil__sep-line { height: 1px; width: 40px; background: linear-gradient(to right, transparent, var(--gold), transparent); }
+}

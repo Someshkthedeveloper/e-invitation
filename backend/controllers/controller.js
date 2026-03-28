@@ -1,0 +1,167 @@
+import Invitation from "../models/invitation.js";
+import { nanoid } from "nanoid";
+
+// Create Invitation
+export const createInvitation = async (req, res) => {
+  try {
+    const { title, hostName, date, time, venue, description, template } =
+      req.body;
+
+    const slug = nanoid(8); // unique link
+
+    const invitation = await Invitation.create({
+      title,
+      hostName,
+      date,
+      time,
+      venue,
+      description,
+      template,
+      slug,
+        user: req.user
+  
+    });
+
+    res.status(201).json({
+      message: "Invitation created",
+      link: `${process.env.BASE_URL}/invite/${slug}`,
+      data: invitation,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get Invitation by slug
+export const getInvitation = async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const invitation = await Invitation.findOne({ slug });
+
+    if (!invitation) {
+      return res.status(404).json({ message: "Not found" });
+    }
+
+    res.json(invitation);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get all invitations for logged-in user
+export const getUserInvitations = async (req, res) => {
+  try {
+    const invitations = await Invitation.find({ user: req.user })
+      .select("slug title hostName date selectedTemplate createdAt")
+      .sort({ createdAt: -1 });
+    res.json(invitations);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Update invitation by slug
+export const updateInvitation = async (req, res) => {
+  try {
+    const inv = await Invitation.findOneAndUpdate(
+      { slug: req.params.slug, user: req.user },
+      req.body,
+      { new: true }
+    );
+    if (!inv) return res.status(404).json({ error: "Not found" });
+    res.json(inv);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+export const uploadImage = async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const { key } = req.body;
+  
+      const allowedKeys = ["bridePhoto", "groomPhoto"];
+      if (!allowedKeys.includes(key)) {
+        return res.status(400).json({ error: "Invalid key" });
+      }
+  
+      if (!req.file) {
+        return res.status(400).json({ error: "File missing" });
+      }
+  
+      const mime = req.file.mimetype;
+      const base64 = req.file.buffer.toString("base64");
+      const dataUrl = `data:${mime};base64,${base64}`;
+  
+      const invitation = await Invitation.findOneAndUpdate(
+        { slug },
+        { $set: { [key]: dataUrl } },
+        { new: true }
+      );
+  
+      if (!invitation) {
+        return res.status(404).json({ error: "Invitation not found" });
+      }
+  
+      res.json({ key, base64: dataUrl });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
+
+  export const uploadGalleryPhoto = async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const { caption } = req.body;
+  
+      if (!req.file) {
+        return res.status(400).json({ error: "Photo missing" });
+      }
+  
+      const mime = req.file.mimetype;
+      const base64 = req.file.buffer.toString("base64");
+      const dataUrl = `data:${mime};base64,${base64}`;
+  
+      const newPhoto = {
+        id: `photo-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        base64: dataUrl,
+        caption: caption || "",
+      };
+  
+      const updated = await Invitation.findOneAndUpdate(
+        { slug },
+        { $push: { gallery: newPhoto } },
+        { new: true }
+      );
+  
+      if (!updated) {
+        return res.status(404).json({ error: "Invitation not found" });
+      }
+  
+      res.json({
+        photo: newPhoto,
+        galleryCount: updated.gallery.length,
+      });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
+
+  export const deleteGalleryPhoto = async (req, res) => {
+    try {
+      const { slug, photoId } = req.params;
+  
+      await Invitation.findOneAndUpdate(
+        { slug },
+        { $pull: { gallery: { id: photoId } } }
+      );
+  
+      res.json({ deleted: photoId });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };

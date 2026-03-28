@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-ivory:        #F9F7F2;
+  --color-ivory-warm:   #F2EDE4;
+  --color-gold:         #C5A059;
+  --color-gold-light:   #D4B87A;
+  --color-charcoal:     #1A1A1A;
+  --color-charcoal-soft:#2D2D2D;
+  --color-rose:         #D4A0A0;
+  --color-muted:        #6B6560;
+
+  /* Fonts */
+  --font-display: "Cormorant Garamond", serif;
+  --font-body:    "Montserrat", sans-serif;
+
+  /* Letter spacing */
+  --tracking-premium: 0.18em;
+  --tracking-widest:  0.25em;
+  --tracking-loose:   0.08em;
+
+  /* Shadows */
+  --shadow-gold: 0 4px 32px rgba(197,160,89,0.18);
+  --shadow-soft: 0 2px 24px rgba(26,26,26,0.06);
+}
+
+/* ---- Page shell ---- */
+.premium-page {
+  background-color: var(--color-ivory);
+  color: var(--color-charcoal);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Gallery overrides (scoped so existing InvitationPage.css unaffected) ---- */
+.premium-page .gallery-grid { columns: 2; column-gap: 1rem; }
+@media (min-width: 768px)  { .premium-page .gallery-grid { columns: 3; column-gap: 1.25rem; } }
+@media (min-width: 1024px) { .premium-page .gallery-grid { columns: 4; column-gap: 1.5rem;  } }
+.premium-page .gallery-grid__item  { break-inside: avoid; margin-bottom: 1rem; border-radius: 0.5rem; overflow: hidden; cursor: pointer; }
+.premium-page .gallery-grid__img   { width: 100%; height: auto; display: block; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
+.premium-page .gallery-grid__item:hover .gallery-grid__img { transform: scale(1.04); }
+
+/* ---- Lightbox overrides ---- */
+.premium-page .lightbox-overlay  { position:fixed; inset:0; background:rgba(26,26,26,0.92); backdrop-filter:blur(8px); z-index:9999; display:flex; align-items:center; justify-content:center; padding:1rem; }
+.premium-page .lightbox-modal    { position:relative; max-width:min(90vw,900px); max-height:90vh; display:flex; flex-direction:column; align-items:center; }
+.premium-page .lightbox-img      { max-width:100%; max-height:80vh; object-fit:contain; border-radius:0.5rem; }
+.premium-page .lightbox-btn      { position:absolute; background:rgba(197,160,89,0.15); border:1px solid rgba(197,160,89,0.3); color:#F9F7F2; border-radius:9999px; padding:0.4rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+.premium-page .lightbox-btn:hover { background:rgba(197,160,89,0.35); }
+.premium-page .lightbox-btn--close { top:-2.5rem; right:0; }
+.premium-page .lightbox-btn--prev  { left:-3.5rem; top:50%; transform:translateY(-50%); }
+.premium-page .lightbox-btn--next  { right:-3.5rem; top:50%; transform:translateY(-50%); }
+.premium-page .lightbox-caption  { color:rgba(249,247,242,0.7); font-family:var(--font-body); font-size:0.85rem; margin-top:0.75rem; text-align:center; }
+.premium-page .lightbox-counter  { color:rgba(249,247,242,0.5); font-size:0.8rem; margin-top:0.25rem; }
+
+/* ---- RSVP form overrides ---- */
+.premium-page .rsvp-form         { display:flex; flex-direction:column; gap:1.25rem; }
+.premium-page .rsvp-form__row    { display:grid; grid-template-columns:1fr; gap:1.25rem; }
+@media (min-width:640px) { .premium-page .rsvp-form__row { grid-template-columns:1fr 1fr; } }
+.premium-page .rsvp-form__field  { display:flex; flex-direction:column; gap:0.4rem; }
+.premium-page .rsvp-form__field label { font-family:var(--font-body); font-size:0.68rem; letter-spacing:var(--tracking-premium); text-transform:uppercase; color:rgba(249,247,242,0.5); }
+.premium-page .rsvp-form__field input,
+.premium-page .rsvp-form__field select,
+.premium-page .rsvp-form__field textarea { background:rgba(255,255,255,0.06); border:1px solid rgba(197,160,89,0.25); border-radius:0.25rem; padding:0.65rem 0.875rem; font-family:var(--font-body); font-size:0.9rem; color:#F9F7F2; outline:none; transition:border-color 0.2s, box-shadow 0.2s; }
+.premium-page .rsvp-form__field input:focus,
+.premium-page .rsvp-form__field select:focus,
+.premium-page .rsvp-form__field textarea:focus { border-color:var(--color-gold); box-shadow:0 0 0 3px rgba(197,160,89,0.12); }
+.premium-page .rsvp-form__radio-group { display:flex; gap:0.75rem; flex-wrap:wrap; }
+.premium-page .rsvp-form__radio  { display:flex; align-items:center; gap:0.4rem; font-size:0.85rem; cursor:pointer; padding:0.4rem 0.875rem; border:1px solid rgba(197,160,89,0.25); border-radius:9999px; color:rgba(249,247,242,0.7); transition:all 0.2s; }
+.premium-page .rsvp-form__radio input[type="radio"] { display:none; }
+.premium-page .rsvp-form__radio--active { background:var(--color-gold); border-color:var(--color-gold); color:white; }
+.premium-page .rsvp-form__submit { background:var(--color-gold); color:#1A1A1A; border:none; padding:0.875rem 2.5rem; font-family:var(--font-body); font-size:0.72rem; letter-spacing:var(--tracking-premium); text-transform:uppercase; border-radius:0.25rem; cursor:pointer; transition:opacity 0.2s; }
+.premium-page .rsvp-form__submit:hover { opacity:0.85; }
+.premium-page .rsvp-success { text-align:center; padding:3rem 2rem; display:flex; flex-direction:column; align-items:center; gap:1rem; }
+.premium-page .rsvp-success h3 { font-family:var(--font-display); font-size:2rem; color:#F9F7F2; }
+.premium-page .rsvp-success p   { font-size:0.9rem; color:rgba(249,247,242,0.6); }
+.premium-page .rsvp-success__blessing { color:var(--color-gold); font-family:var(--font-display); font-size:1.25rem; }
+.premium-page .rsvp-form__error { color:#fca5a5; font-size:0.85rem; }
+
+/* ---- btn override for RSVP submit inside premium ---- */
+.premium-page .btn { font-family: var(--font-body); }
+
+/* ---- Timeline mobile: stack vertically on small screens ---- */
+@media (max-width: 639px) {
+  .premium-page .timeline-grid {
+    grid-template-columns: 2rem 1fr !important;
+  }
+}
+
+/* ---- Gallery horizontal carousel: hide scrollbar ---- */
+.premium-page section[id="gallery"] > div:nth-child(2)::-webkit-scrollbar { display: none; }
+
+/* ---- Select option colors inside dark RSVP section ---- */
+.premium-page .rsvp-form__field select option { background: #2D2D2D; color: #F9F7F2; }
+
+/* ---- Shimmer keyframe for gallery cards ---- */
+@keyframes premium-shimmer {
+  0%   { transform: translateX(-100%) rotate(28deg); }
+  100% { transform: translateX(350%) rotate(28deg); }
+}
+
+/* ---- Audio player pulse ---- */
+@keyframes premium-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50%       { transform: scale(1.5); opacity: 0; }
+}
+
+/* ---- Countdown box entrance ---- */
+.premium-countdown-box {
+  transition: border-color 0.3s;
+}
+.premium-countdown-box:hover {
+  border-color: rgba(197,160,89,0.7) !important;
+}

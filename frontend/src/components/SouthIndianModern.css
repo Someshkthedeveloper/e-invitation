@@ -1,0 +1,308 @@
+/* ============================================================
+   MODERN PATTAM — Template 3
+   Navy + Gold + White, Two-Column Layout
+   ============================================================ */
+
+:root {
+  --sim-navy:      #1A3A5C;
+  --sim-navy-deep: #0D2340;
+  --sim-navy-mid:  #24527A;
+}
+
+.sim-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  font-family: var(--font-body);
+}
+
+.sim {
+  width: 100%;
+  max-width: 720px;
+  background: #fff;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* ---- Geometric Top/Bottom ---- */
+.sim__geo-top,
+.sim__geo-bottom {
+  background: var(--sim-navy-deep);
+  padding: 0;
+}
+
+.sim__diamond-strip {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 0;
+  background: var(--sim-navy);
+}
+
+.sim__diamond-strip span {
+  color: var(--gold);
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.sim__footer-text {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-pale);
+  padding: 10px 24px;
+}
+
+/* ---- Main Layout ---- */
+.sim__layout {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  min-height: 500px;
+}
+
+/* ---- Left Column ---- */
+.sim__left {
+  background: linear-gradient(160deg, var(--sim-navy-deep) 0%, var(--sim-navy) 100%);
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sim__left-top {
+  text-align: center;
+}
+
+.sim__left-symbol {
+  font-size: 2rem;
+  color: var(--gold);
+  margin-bottom: 8px;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.sim__left-eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.sim__couple-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sim__bride,
+.sim__groom {
+  text-align: center;
+}
+
+.sim__couple-label {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+
+.sim__couple-name {
+  font-family: var(--font-accent);
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.sim__couple-parents {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: rgba(245,230,192,0.65);
+  font-style: italic;
+}
+
+.sim__ampersand {
+  text-align: center;
+  font-family: var(--font-accent);
+  font-size: 2rem;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.sim__left-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.4;
+}
+
+.sim__personal-note {
+  font-family: var(--font-accent);
+  font-size: 0.85rem;
+  font-style: italic;
+  color: rgba(245,230,192,0.7);
+  text-align: center;
+  line-height: 1.55;
+}
+
+.sim__dress-code {
+  text-align: center;
+  margin-top: auto;
+}
+
+.sim__dress-label {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.75;
+  margin-bottom: 4px;
+}
+
+.sim__dress-value {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: rgba(245,230,192,0.75);
+  font-style: italic;
+}
+
+/* ---- Accent Bar ---- */
+.sim__accent-bar {
+  width: 32px;
+  background: var(--gold);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.sim__accent-line {
+  flex: 1;
+  width: 2px;
+  background: rgba(255,255,255,0.3);
+}
+
+.sim__accent-diamond {
+  color: var(--sim-navy);
+  font-size: 0.9rem;
+  padding: 8px 0;
+}
+
+/* ---- Right Column ---- */
+.sim__right {
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #fff;
+}
+
+/* ---- Event Blocks ---- */
+.sim__event-block {
+  padding: 16px 18px;
+  border: 1px solid rgba(26,58,92,0.12);
+  border-left: 3px solid var(--gold);
+  border-radius: 4px;
+  background: rgba(26,58,92,0.02);
+}
+
+.sim__event-block--reception {
+  border-left-color: var(--sim-navy);
+}
+
+.sim__event-label {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--sim-navy);
+  margin-bottom: 12px;
+}
+
+.sim__event-detail {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: rgba(26,58,92,0.8);
+  line-height: 1.4;
+}
+
+.sim__event-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.sim__addr {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: rgba(26,58,92,0.55);
+  font-style: italic;
+}
+
+/* ---- Pre-Events ---- */
+.sim__pre-events {
+  /* inherits from event block */
+}
+
+.sim__pre-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sim__pre-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: rgba(26,58,92,0.75);
+}
+
+/* ---- RSVP ---- */
+.sim__rsvp {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: rgba(26,58,92,0.75);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sim__rsvp-name {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--sim-navy);
+  font-weight: 500;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+  .sim__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sim__accent-bar {
+    width: 100%;
+    height: 24px;
+    flex-direction: row;
+  }
+
+  .sim__accent-line {
+    flex: 1;
+    width: auto;
+    height: 2px;
+  }
+
+  .sim__left { padding: 24px 20px; }
+  .sim__right { padding: 24px 20px; }
+}
