@@ -38,6 +38,17 @@ export const submitRsvp = (slug, data) =>
 export const getRsvps = (slug) =>
   request(`/api/invitations/${slug}/rsvp`)
 
+export const uploadInvitationImage = (slug, key, file) => {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('key', key)
+  return fetch(`${BASE_URL}/api/invitations/${slug}/upload-image`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${getToken()}` },
+    body: formData,
+  }).then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() })
+}
+
 export const uploadGalleryPhoto = (slug, formData) =>
   fetch(`${BASE_URL}/api/invitations/${slug}/gallery`, { method: 'POST', body: formData })
     .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() })

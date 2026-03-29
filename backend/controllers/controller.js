@@ -1,30 +1,19 @@
 import Invitation from "../models/invitation.js";
-import { nanoid } from "nanoid";
 
 // Create Invitation
 export const createInvitation = async (req, res) => {
   try {
-    const { title, hostName, date, time, venue, description, template } =
-      req.body;
-
-    const slug = nanoid(8); // unique link
+    const { slug, ...rest } = req.body;
 
     const invitation = await Invitation.create({
-      title,
-      hostName,
-      date,
-      time,
-      venue,
-      description,
-      template,
+      ...rest,
       slug,
-        user: req.user
-  
+      user: req.user,
     });
 
     res.status(201).json({
       message: "Invitation created",
-      link: `${process.env.BASE_URL}/invite/${slug}`,
+      link: `${process.env.BASE_URL}/invitation/${slug}`,
       data: invitation,
     });
   } catch (error) {
@@ -53,7 +42,6 @@ export const getInvitation = async (req, res) => {
 export const getUserInvitations = async (req, res) => {
   try {
     const invitations = await Invitation.find({ user: req.user })
-      .select("slug title hostName date selectedTemplate createdAt")
       .sort({ createdAt: -1 });
     res.json(invitations);
   } catch (error) {

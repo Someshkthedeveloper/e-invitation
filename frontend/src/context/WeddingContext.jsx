@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react'
 import { slugify } from '../utils/slugify'
-import { createInvitation } from '../services/api'
+import { createInvitation, uploadInvitationImage, uploadGalleryPhoto } from '../services/api'
 
 const WeddingContext = createContext()
 
@@ -86,8 +86,29 @@ export function WeddingProvider({ children }) {
     }
 
     try {
-      const payload = { ...details, selectedTemplate, slug }
+      // Send only text fields — blob URLs and File objects can't be JSON-serialised
+      const { bridePhoto, groomPhoto, bridePhotoFile, groomPhotoFile, gallery, ...textData } = details
+      const payload = { ...textData, selectedTemplate, slug }
       await createInvitation(payload)
+
+      // Upload bride/groom photos via multipart if files were selected
+      if (bridePhotoFile) {
+        await uploadInvitationImage(slug, 'bridePhoto', bridePhotoFile)
+      }
+      if (groomPhotoFile) {
+        await uploadInvitationImage(slug, 'groomPhoto', groomPhotoFile)
+      }
+
+      // Upload gallery photos
+      for (const photo of gallery) {
+        if (photo.file) {
+          const fd = new FormData()
+          fd.append('photo', photo.file)
+          if (photo.caption) fd.append('caption', photo.caption)
+          await uploadGalleryPhoto(slug, fd)
+        }
+      }
+
       setDetails(prev => ({ ...prev, isPublished: true, publishedSlug: slug }))
       setPublishing(false)
       return slug

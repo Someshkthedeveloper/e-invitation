@@ -98,7 +98,7 @@ export default function CreatePage() {
   const handlePhotoUpload = (e, key) => {
     const file = e.target.files?.[0]
     if (!file) return
-    updateDetails({ [key]: URL.createObjectURL(file) })
+    updateDetails({ [key]: URL.createObjectURL(file), [`${key}File`]: file })
   }
 
   const handleGalleryAdd = (e) => {
