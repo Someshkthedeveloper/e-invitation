@@ -6,6 +6,16 @@ const gallerySchema = new mongoose.Schema({
     caption: String,
 })
 
+const customEventSchema = new mongoose.Schema({
+    id:      String,
+    icon:    String,
+    title:   String,
+    date:    String,
+    time:    String,
+    venue:   String,
+    address: String,
+})
+
 const invitationSchema = new mongoose.Schema(
     {
         eventName:          String,
@@ -49,6 +59,10 @@ const invitationSchema = new mongoose.Schema(
             type: String,
             default: "south-indian-classic",
         },
+        showRsvp: {
+            type: Boolean,
+            default: true,
+        },
         bridePhoto: {
             type: String,
             default: null,
@@ -58,6 +72,11 @@ const invitationSchema = new mongoose.Schema(
             default: null,
         },
         gallery: [gallerySchema],
+        customEvents: [customEventSchema],
+        coverVideoUrl: {
+            type: String,
+            default: '',
+        },
     },
     { timestamps: true }
 )

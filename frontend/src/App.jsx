@@ -7,7 +7,6 @@ import { ThemeProvider } from './context/ThemeContext'
 import Navbar from './components/Navbar'
 import LoginPage from './pages/auth/LoginPage'
 import CreatePage from './pages/create/CreatePage'
-import PreviewPage from './pages/PreviewPage'
 import InvitationPage from './pages/invitation/InvitationPage'
 import PremiumPage from './pages/premium/PremiumPage'
 import DashboardPage from './pages/dashboard/DashboardPage'
@@ -28,7 +27,6 @@ function AnimatedRoutes() {
         <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/dashboard/:slug/rsvps" element={<ProtectedRoute><RSVPDashboard /></ProtectedRoute>} />
         <Route path="/create" element={<ProtectedRoute><CreatePage /></ProtectedRoute>} />
-        <Route path="/preview" element={<ProtectedRoute><PreviewPage /></ProtectedRoute>} />
       </Routes>
     </AnimatePresence>
   )

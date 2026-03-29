@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useWedding } from '../../context/WeddingContext'
 import SouthIndianClassic from '../../components/SouthIndianClassic'
 import SouthIndianLotus from '../../components/SouthIndianLotus'
 import SouthIndianModern from '../../components/SouthIndianModern'
 import LivePreviewModal from '../invitation/LivePreviewModal'
+import defaultCoverVideo from '../../assets/video edit.mp4'
 import './CreatePage.css'
 
 /* ---- Shared mini components ---- */
@@ -66,8 +66,7 @@ const templates = [
 
 /* ---- Step titles ---- */
 const STEP_LABELS = [
-  'Ceremony', 'Couple', 'Reception',
-  'Pre-Wedding', 'Gallery', 'RSVP', 'Template',
+  'Events', 'Couple', 'Pre-Wedding', 'Gallery', 'RSVP', 'Template',
 ]
 const TOTAL_STEPS = STEP_LABELS.length
 
@@ -78,13 +77,18 @@ const pageVariants = {
   exit: (dir) => ({ x: dir > 0 ? -60 : 60, opacity: 0 }),
 }
 
+const CUSTOM_EVENT_ICONS = ['🌸', '🎊', '🙏', '🎶', '✨', '★']
+
 export default function CreatePage() {
-  const { details, updateDetails, addPhoto, removePhoto, selectedTemplate, setSelectedTemplate } = useWedding()
-  const navigate = useNavigate()
+  const { details, updateDetails, addPhoto, removePhoto, selectedTemplate, setSelectedTemplate, publishInvitation, publishing, publishError } = useWedding()
 
   const [step, setStep] = useState(1)
   const [direction, setDirection] = useState(1)
   const [preview, setPreview] = useState(null) // { templateId, templateName }
+  const [published, setPublished] = useState(false)
+  const [publishedSlug, setPublishedSlug] = useState('')
+  const [copied, setCopied] = useState(false)
+  const [coverVideoPreviewUrl, setCoverVideoPreviewUrl] = useState(null)
   const galleryRef = useRef(null)
 
   const set = (key) => (val) => updateDetails({ [key]: val })
@@ -106,6 +110,13 @@ export default function CreatePage() {
     e.target.value = ''
   }
 
+  const handleCoverVideoUpload = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setCoverVideoPreviewUrl(URL.createObjectURL(file))
+    updateDetails({ coverVideoFile: file })
+  }
+
   const openPreview = (tpl) => {
     setSelectedTemplate(tpl.id)
     setPreview({ templateId: tpl.id, templateName: tpl.name })
@@ -115,7 +126,40 @@ export default function CreatePage() {
 
   const selectTemplate = () => {
     setPreview(null)
-    navigate('/preview')
+  }
+
+  const handlePublish = async () => {
+    try {
+      const slug = await publishInvitation()
+      setPublishedSlug(slug)
+      setPublished(true)
+    } catch (err) {
+      console.error('Publish failed:', err.message)
+      // publishError is already set in context and displayed in step 6
+    }
+  }
+
+  const handleCopy = () => {
+    const url = `${window.location.origin}/invitation/${publishedSlug}`
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  const addCustomEvent = () => {
+    const id = `ce-${Date.now()}-${Math.random().toString(36).slice(2)}`
+    updateDetails({ customEvents: [...(details.customEvents || []), { id, icon: '🌸', title: '', date: '', time: '', venue: '', address: '' }] })
+  }
+
+  const updateCustomEvent = (id, field, value) => {
+    updateDetails({
+      customEvents: (details.customEvents || []).map(ev => ev.id === id ? { ...ev, [field]: value } : ev)
+    })
+  }
+
+  const removeCustomEvent = (id) => {
+    updateDetails({ customEvents: (details.customEvents || []).filter(ev => ev.id !== id) })
   }
 
   /* ---- Step content ---- */
@@ -123,8 +167,10 @@ export default function CreatePage() {
     switch (step) {
       case 1: return (
         <div className="create-step">
-          <h2 className="create-step__title">Ceremony Details</h2>
-          <p className="create-step__subtitle">Tell us about your wedding day</p>
+          <h2 className="create-step__title">Events</h2>
+          <p className="create-step__subtitle">Wedding ceremony and reception details</p>
+
+          <div className="create-step__section-label">✿ Wedding Ceremony</div>
           <div className="field-grid field-grid--2">
             <Field label="Event Name" id="eventName" value={details.eventName} onChange={set('eventName')} placeholder="Wedding Celebration" required />
             <Field label="Wedding Date" id="weddingDate" type="date" value={details.weddingDate} onChange={set('weddingDate')} required />
@@ -134,6 +180,42 @@ export default function CreatePage() {
           <div className="field-grid field-grid--2">
             <Field label="Venue Name" id="venue" value={details.venue} onChange={set('venue')} placeholder="Sri Kapaleeshwarar Temple Hall" />
             <Field label="Venue Address" id="venueAddress" value={details.venueAddress} onChange={set('venueAddress')} placeholder="Mylapore, Chennai" />
+          </div>
+
+          <div className="create-step__divider" />
+          <div className="create-step__section-label">★ Reception</div>
+          <div className="field-grid field-grid--2">
+            <Field label="Reception Date" id="receptionDate" type="date" value={details.receptionDate} onChange={set('receptionDate')} />
+            <Field label="Reception Time" id="receptionTime" value={details.receptionTime} onChange={set('receptionTime')} placeholder="7:00 PM" />
+            <Field label="Reception Venue" id="receptionVenue" value={details.receptionVenue} onChange={set('receptionVenue')} placeholder="Narada Gana Sabha" />
+            <Field label="Reception Address" id="receptionAddress" value={details.receptionAddress} onChange={set('receptionAddress')} placeholder="T.T.K Road, Chennai" />
+          </div>
+
+          <div className="create-step__divider" />
+          <div className="create-step__section-label">Cover Video</div>
+          <p className="cover-video-hint">
+            The hero section plays a looping video background. Leave blank to use the built-in default video.
+          </p>
+          <div className="field">
+            <label htmlFor="coverVideoFile">Custom Video (optional)</label>
+            <input
+              id="coverVideoFile"
+              type="file"
+              accept="video/*"
+              onChange={handleCoverVideoUpload}
+            />
+          </div>
+          <div className="cover-video-preview">
+            <video
+              key={coverVideoPreviewUrl || 'default'}
+              src={coverVideoPreviewUrl || defaultCoverVideo}
+              muted
+              loop
+              autoPlay
+              playsInline
+              className="cover-video-preview__video"
+            />
+            <div className="cover-video-preview__label">Preview · muted</div>
           </div>
         </div>
       )
@@ -169,21 +251,8 @@ export default function CreatePage() {
 
       case 3: return (
         <div className="create-step">
-          <h2 className="create-step__title">Reception</h2>
-          <p className="create-step__subtitle">Details for the reception celebration</p>
-          <div className="field-grid field-grid--2">
-            <Field label="Reception Date" id="receptionDate" type="date" value={details.receptionDate} onChange={set('receptionDate')} />
-            <Field label="Reception Time" id="receptionTime" value={details.receptionTime} onChange={set('receptionTime')} placeholder="7:00 PM" />
-            <Field label="Reception Venue" id="receptionVenue" value={details.receptionVenue} onChange={set('receptionVenue')} placeholder="Narada Gana Sabha" />
-            <Field label="Reception Address" id="receptionAddress" value={details.receptionAddress} onChange={set('receptionAddress')} placeholder="T.T.K Road, Chennai" />
-          </div>
-        </div>
-      )
-
-      case 4: return (
-        <div className="create-step">
           <h2 className="create-step__title">Pre-Wedding Events</h2>
-          <p className="create-step__subtitle">Toggle to add Mehendi and Haldi ceremonies</p>
+          <p className="create-step__subtitle">Toggle to add Mehendi and Haldi ceremonies, or add custom events</p>
           <div className="toggle-row">
             <Toggle label="Henna Ceremony" id="mehendi" checked={details.mehendi} onChange={set('mehendi')} />
             <Toggle label="Turmeric Ceremony" id="haldi" checked={details.haldi} onChange={set('haldi')} />
@@ -204,10 +273,51 @@ export default function CreatePage() {
               </motion.div>
             )}
           </AnimatePresence>
+
+          <div className="create-step__divider" />
+          <div className="create-step__section-label">✦ Custom Events</div>
+
+          <AnimatePresence>
+            {(details.customEvents || []).map((ev, idx) => (
+              <motion.div
+                key={ev.id}
+                className="custom-event-card"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25 }}
+              >
+                <div className="custom-event-card__header">
+                  <div className="custom-event-card__icon-picker">
+                    {CUSTOM_EVENT_ICONS.map(icon => (
+                      <button
+                        key={icon}
+                        type="button"
+                        className={`custom-event-card__icon-btn ${ev.icon === icon ? 'is-active' : ''}`}
+                        onClick={() => updateCustomEvent(ev.id, 'icon', icon)}
+                      >{icon}</button>
+                    ))}
+                  </div>
+                  <button type="button" className="custom-event-card__remove" onClick={() => removeCustomEvent(ev.id)} aria-label="Remove event">✕</button>
+                </div>
+                <div className="field-grid field-grid--2">
+                  <Field label="Event Title" id={`ce-title-${ev.id}`} value={ev.title} onChange={v => updateCustomEvent(ev.id, 'title', v)} placeholder="e.g. Sangeet Night" />
+                  <Field label="Date" id={`ce-date-${ev.id}`} type="date" value={ev.date} onChange={v => updateCustomEvent(ev.id, 'date', v)} />
+                  <Field label="Time" id={`ce-time-${ev.id}`} value={ev.time} onChange={v => updateCustomEvent(ev.id, 'time', v)} placeholder="6:00 PM" />
+                  <Field label="Venue" id={`ce-venue-${ev.id}`} value={ev.venue} onChange={v => updateCustomEvent(ev.id, 'venue', v)} placeholder="Venue name" />
+                  <Field label="Address" id={`ce-address-${ev.id}`} value={ev.address} onChange={v => updateCustomEvent(ev.id, 'address', v)} placeholder="Full address" />
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+
+          <button type="button" className="custom-event-add-btn" onClick={addCustomEvent}>
+            ＋ Add Custom Event
+          </button>
         </div>
       )
 
-      case 5: return (
+      case 4: return (
         <div className="create-step">
           <h2 className="create-step__title">Gallery &amp; Venue Map</h2>
           <p className="create-step__subtitle">Add photos and a Google Maps link for the online invitation</p>
@@ -232,10 +342,13 @@ export default function CreatePage() {
         </div>
       )
 
-      case 6: return (
+      case 5: return (
         <div className="create-step">
           <h2 className="create-step__title">RSVP &amp; Extras</h2>
           <p className="create-step__subtitle">Contact info, dress code, and a personal message</p>
+          <div className="toggle-row" style={{ marginBottom: '4px' }}>
+            <Toggle label="Show RSVP Form on Invitation" id="showRsvp" checked={details.showRsvp !== false} onChange={set('showRsvp')} />
+          </div>
           <div className="field-grid field-grid--3">
             <Field label="RSVP Contact Name" id="rsvpName" value={details.rsvpName} onChange={set('rsvpName')} placeholder="Ramachandran" />
             <Field label="RSVP Phone" id="rsvpPhone" value={details.rsvpPhone} onChange={set('rsvpPhone')} placeholder="+91 98765 43210" />
@@ -248,10 +361,33 @@ export default function CreatePage() {
         </div>
       )
 
-      case 7: return (
+      case 6: return (
         <div className="create-step">
           <h2 className="create-step__title">Choose Your Template</h2>
           <p className="create-step__subtitle">Click any template to see a live preview of your invitation</p>
+
+          {published && (
+            <motion.div
+              className="publish-success"
+              initial={{ opacity: 0, y: -12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <div className="publish-success__icon">✓</div>
+              <div className="publish-success__body">
+                <p className="publish-success__heading">Your invitation is live!</p>
+                <p className="publish-success__link">{`${window.location.origin}/invitation/${publishedSlug}`}</p>
+              </div>
+              <button type="button" className="publish-success__copy" onClick={handleCopy}>
+                {copied ? 'Copied!' : 'Copy Link'}
+              </button>
+            </motion.div>
+          )}
+
+          {publishError && (
+            <p className="publish-error">{publishError}</p>
+          )}
+
           <div className="template-grid">
             {templates.map((tpl) => (
               <div
@@ -348,9 +484,9 @@ export default function CreatePage() {
               Continue →
             </button>
           )}
-          {step === TOTAL_STEPS && selectedTemplate && (
-            <button type="button" className="btn btn-gold create-nav__publish" onClick={() => navigate('/preview')}>
-              Publish &amp; Get Link →
+          {step === TOTAL_STEPS && selectedTemplate && !published && (
+            <button type="button" className="btn btn-gold create-nav__publish" onClick={handlePublish} disabled={publishing}>
+              {publishing ? 'Publishing…' : 'Publish & Get Link →'}
             </button>
           )}
         </div>

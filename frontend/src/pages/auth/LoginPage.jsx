@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../../context/AuthContext'
+import preweddingVideo from '../../assets/beautiful-moments-prewedding-traditional-prewedding-video-prewedding-concept-raw_2En1gief.mp4'
 import './LoginPage.css'
 
 export default function LoginPage() {
@@ -48,19 +49,45 @@ export default function LoginPage() {
 
   return (
     <div className="auth-split">
-      {/* Left decorative panel */}
+      {/* Left video panel */}
       <div className="auth-split__left" aria-hidden="true">
+        <video
+          className="auth-split__video"
+          src={preweddingVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+        <div className="auth-split__video-overlay" />
         <div className="auth-split__left-inner">
-          <div className="auth-split__logo">
+          <motion.div
+            className="auth-split__logo"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
             <span className="auth-split__logo-sym">✦</span>
             <span className="auth-split__logo-text">eInvite</span>
-          </div>
-          <p className="auth-split__tagline">
+          </motion.div>
+          <motion.p
+            className="auth-split__tagline"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.55 }}
+          >
             Beautiful wedding invitations,<br />shared with everyone you love.
-          </p>
-          <div className="auth-split__orb auth-split__orb--1" />
-          <div className="auth-split__orb auth-split__orb--2" />
-          <div className="auth-split__orb auth-split__orb--3" />
+          </motion.p>
+          <motion.div
+            className="auth-split__badge-row"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.9 }}
+          >
+            <span className="auth-split__badge">✿ Moments</span>
+            <span className="auth-split__badge">★ Memories</span>
+            <span className="auth-split__badge">♡ Love</span>
+          </motion.div>
         </div>
       </div>
 

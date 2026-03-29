@@ -1,20 +1,27 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 
-function buildMapsUrl(venue, address) {
-  const query = encodeURIComponent(`${venue} ${address}`.trim())
-  return `https://www.google.com/maps/search/?api=1&query=${query}`
+function isEmbedUrl(url) {
+  return url && (url.includes('output=embed') || url.includes('/embed/'))
 }
 
 function buildEmbedUrl(venueMapUrl, venue, address) {
-  if (venueMapUrl) return venueMapUrl
-  const query = encodeURIComponent(`${venue} ${address}`.trim())
+  if (isEmbedUrl(venueMapUrl)) return venueMapUrl
+  const query = encodeURIComponent(`${venue || ''} ${address || ''}`.trim())
   return `https://maps.google.com/maps?q=${query}&output=embed`
+}
+
+function getDirectionsUrl(venueMapUrl, venueDirectionsUrl, venue, address) {
+  // Share link (non-embed) → use as directions
+  if (venueMapUrl && !isEmbedUrl(venueMapUrl)) return venueMapUrl
+  if (venueDirectionsUrl) return venueDirectionsUrl
+  const query = encodeURIComponent(`${venue || ''} ${address || ''}`.trim())
+  return `https://www.google.com/maps/search/?api=1&query=${query}`
 }
 
 export default function VenueSection({ data }) {
   const embedUrl = buildEmbedUrl(data.venueMapUrl, data.venue, data.venueAddress)
-  const directionsUrl = data.venueDirectionsUrl || buildMapsUrl(data.venue, data.venueAddress)
+  const directionsUrl = getDirectionsUrl(data.venueMapUrl, data.venueDirectionsUrl, data.venue, data.venueAddress)
 
   return (
     <section className="inv-venue" id="venue">

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useInvitationApi } from '../../hooks/useInvitationApi'
 import LoadingSpinner from '../../components/shared/LoadingSpinner'
@@ -17,6 +17,14 @@ import './InvitationPage.css'
 export default function InvitationPage() {
   const { slug } = useParams()
   const { data, loading, error } = useInvitationApi(slug)
+
+  useEffect(() => {
+    const prev = document.documentElement.getAttribute('data-theme')
+    document.documentElement.setAttribute('data-theme', 'light')
+    return () => {
+      document.documentElement.setAttribute('data-theme', prev || 'dark')
+    }
+  }, [])
 
   if (loading) {
     return (
@@ -46,7 +54,7 @@ export default function InvitationPage() {
       <EventsSection data={data} />
       <VenueSection data={data} />
       <GallerySection data={data} />
-      <RSVPSection data={data} />
+      {data.showRsvp !== false && <RSVPSection data={data} />}
       <FooterSection data={data} />
     </div>
   )

@@ -50,11 +50,21 @@ export const uploadInvitationImage = (slug, key, file) => {
 }
 
 export const uploadGalleryPhoto = (slug, formData) =>
-  fetch(`${BASE_URL}/api/invitations/${slug}/gallery`, { method: 'POST', body: formData })
-    .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() })
+  fetch(`${BASE_URL}/api/invitations/${slug}/gallery`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${getToken()}` },
+    body: formData,
+  }).then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() })
 
 export const deleteGalleryPhoto = (slug, photoId) =>
   request(`/api/invitations/${slug}/gallery/${photoId}`, { method: 'DELETE' })
 
 export const getUserInvitations = () =>
   request('/api/invitations')
+
+export const uploadCoverVideo = (slug, formData) =>
+  fetch(`${BASE_URL}/api/invitations/${slug}/upload-cover-video`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${getToken()}` },
+    body: formData,
+  }).then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() })

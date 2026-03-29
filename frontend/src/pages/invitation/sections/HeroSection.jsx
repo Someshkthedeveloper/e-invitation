@@ -1,6 +1,8 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { formatDate } from '../../../utils/formatDate'
+import defaultCoverVideo from '../../../assets/video edit.mp4'
+
 
 const stagger = {
   container: { animate: { transition: { staggerChildren: 0.18 } } },
@@ -17,7 +19,18 @@ export default function HeroSection({ data }) {
 
   return (
     <section className="inv-hero" id="hero">
-      <div className="inv-hero__bg" />
+      <div className="inv-hero__bg">
+        <video
+          className="inv-hero__video"
+          src={data.coverVideoUrl || defaultCoverVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-hidden="true"
+        />
+        <div className="inv-hero__overlay" />
+      </div>
 
       <motion.div
         className="inv-hero__content"

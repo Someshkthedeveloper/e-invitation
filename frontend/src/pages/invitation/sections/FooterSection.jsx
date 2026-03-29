@@ -96,6 +96,24 @@ export default function FooterSection({ data }) {
         >
           Made with ❤ using eInvite
         </motion.p>
+
+        <motion.p
+          className="inv-footer__developer"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+        >
+          Developed by{' '}
+          <a
+            href="https://someshk-portfolio.netlify.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inv-footer__developer-link"
+          >
+            Somesh
+          </a>
+        </motion.p>
       </div>
     </footer>
   )

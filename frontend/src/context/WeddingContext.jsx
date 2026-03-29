@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react'
 import { slugify } from '../utils/slugify'
-import { createInvitation, uploadInvitationImage, uploadGalleryPhoto } from '../services/api'
+import { createInvitation, uploadInvitationImage, uploadGalleryPhoto, uploadCoverVideo } from '../services/api'
 
 const WeddingContext = createContext()
 
@@ -40,6 +40,10 @@ export const initialDetails = {
   venueMapUrl:        '',
   venueDirectionsUrl: '',
   gallery:            [],  // [{ id, url, caption, file? }]
+  customEvents:       [],  // [{ id, icon, title, date, time, venue, address }]
+  showRsvp:           false,
+  coverVideoUrl:      '',
+  coverVideoFile:     null,
   isPublished:        false,
   publishedSlug:      '',
 }
@@ -76,8 +80,7 @@ export function WeddingProvider({ children }) {
 
     const slug = slugify(details.brideName, details.groomName, details.weddingDate)
 
-    const apiUrl = import.meta.env.VITE_API_URL
-    if (!apiUrl) {
+    if (!import.meta.env.VITE_API_URL) {
       // Dev mode: simulate publish
       await new Promise(r => setTimeout(r, 700))
       setDetails(prev => ({ ...prev, isPublished: true, publishedSlug: slug }))
@@ -85,38 +88,69 @@ export function WeddingProvider({ children }) {
       return slug
     }
 
+    // Destructure all non-serialisable fields up front
+    const {
+      bridePhoto, groomPhoto,
+      bridePhotoFile, groomPhotoFile,
+      gallery, coverVideoFile,
+      ...textData
+    } = details
+    const payload = { ...textData, selectedTemplate, slug }
+
+    // FATAL: create the invitation record — if this fails, abort with error
     try {
-      // Send only text fields — blob URLs and File objects can't be JSON-serialised
-      const { bridePhoto, groomPhoto, bridePhotoFile, groomPhotoFile, gallery, ...textData } = details
-      const payload = { ...textData, selectedTemplate, slug }
       await createInvitation(payload)
-
-      // Upload bride/groom photos via multipart if files were selected
-      if (bridePhotoFile) {
-        await uploadInvitationImage(slug, 'bridePhoto', bridePhotoFile)
-      }
-      if (groomPhotoFile) {
-        await uploadInvitationImage(slug, 'groomPhoto', groomPhotoFile)
-      }
-
-      // Upload gallery photos
-      for (const photo of gallery) {
-        if (photo.file) {
-          const fd = new FormData()
-          fd.append('photo', photo.file)
-          if (photo.caption) fd.append('caption', photo.caption)
-          await uploadGalleryPhoto(slug, fd)
-        }
-      }
-
-      setDetails(prev => ({ ...prev, isPublished: true, publishedSlug: slug }))
-      setPublishing(false)
-      return slug
     } catch (err) {
       setPublishError(err.message)
       setPublishing(false)
       throw err
     }
+
+    // NON-FATAL: bride/groom photos
+    if (bridePhotoFile) {
+      try {
+        await uploadInvitationImage(slug, 'bridePhoto', bridePhotoFile)
+      } catch (e) {
+        console.warn('Bride photo upload failed (non-fatal):', e.message)
+      }
+    }
+    if (groomPhotoFile) {
+      try {
+        await uploadInvitationImage(slug, 'groomPhoto', groomPhotoFile)
+      } catch (e) {
+        console.warn('Groom photo upload failed (non-fatal):', e.message)
+      }
+    }
+
+    // NON-FATAL: gallery photos
+    for (const photo of gallery) {
+      if (photo.file) {
+        try {
+          const fd = new FormData()
+          fd.append('photo', photo.file)
+          if (photo.caption) fd.append('caption', photo.caption)
+          await uploadGalleryPhoto(slug, fd)
+        } catch (e) {
+          console.warn(`Gallery photo ${photo.id} upload failed (non-fatal):`, e.message)
+        }
+      }
+    }
+
+    // NON-FATAL: cover video
+    if (coverVideoFile) {
+      try {
+        const fd = new FormData()
+        fd.append('video', coverVideoFile)
+        await uploadCoverVideo(slug, fd)
+      } catch (e) {
+        console.warn('Cover video upload failed (non-fatal):', e.message)
+      }
+    }
+
+    // Always succeed if invitation record was created
+    setDetails(prev => ({ ...prev, isPublished: true, publishedSlug: slug }))
+    setPublishing(false)
+    return slug
   }
 
   return (

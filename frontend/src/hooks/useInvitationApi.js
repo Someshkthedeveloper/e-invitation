@@ -61,7 +61,15 @@ export function useInvitationApi(slug) {
     setLoading(true)
     setError(null)
     getInvitation(slug)
-      .then(inv => { setData(inv); setLoading(false) })
+      .then(inv => {
+        // Normalize gallery: backend stores { base64 }, components expect { url }
+        const normalized = {
+          ...inv,
+          gallery: (inv.gallery || []).map(p => ({ ...p, url: p.url || p.base64 }))
+        }
+        setData(normalized)
+        setLoading(false)
+      })
       .catch(err => { setError(err.message); setLoading(false) })
   }, [slug])
 

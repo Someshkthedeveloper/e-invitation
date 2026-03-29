@@ -55,7 +55,7 @@ export const updateInvitation = async (req, res) => {
     const inv = await Invitation.findOneAndUpdate(
       { slug: req.params.slug, user: req.user },
       req.body,
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (!inv) return res.status(404).json({ error: "Not found" });
     res.json(inv);
@@ -86,7 +86,7 @@ export const uploadImage = async (req, res) => {
       const invitation = await Invitation.findOneAndUpdate(
         { slug },
         { $set: { [key]: dataUrl } },
-        { new: true }
+        { returnDocument: 'after' }
       );
   
       if (!invitation) {
@@ -122,7 +122,7 @@ export const uploadImage = async (req, res) => {
       const updated = await Invitation.findOneAndUpdate(
         { slug },
         { $push: { gallery: newPhoto } },
-        { new: true }
+        { returnDocument: 'after' }
       );
   
       if (!updated) {
@@ -142,14 +142,40 @@ export const uploadImage = async (req, res) => {
   export const deleteGalleryPhoto = async (req, res) => {
     try {
       const { slug, photoId } = req.params;
-  
+
       await Invitation.findOneAndUpdate(
         { slug },
         { $pull: { gallery: { id: photoId } } }
       );
-  
+
       res.json({ deleted: photoId });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
   };
+
+export const uploadCoverVideo = async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({ error: "Video file missing" });
+    }
+
+    const videoUrl = `/uploads/videos/${req.file.filename}`;
+
+    const invitation = await Invitation.findOneAndUpdate(
+      { slug, user: req.user },
+      { $set: { coverVideoUrl: videoUrl } },
+      { returnDocument: "after" }
+    );
+
+    if (!invitation) {
+      return res.status(404).json({ error: "Invitation not found" });
+    }
+
+    res.json({ coverVideoUrl: videoUrl });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

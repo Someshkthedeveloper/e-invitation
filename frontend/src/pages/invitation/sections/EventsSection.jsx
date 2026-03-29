@@ -7,35 +7,41 @@ function openMap(venue, address) {
   window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank', 'noopener,noreferrer')
 }
 
-function EventCard({ icon, title, date, time, venue, address, index }) {
+function TimelineItem({ icon, title, date, time, venue, address, index }) {
+  const isRight = index % 2 !== 0
   const hasVenue = Boolean(venue)
 
   return (
     <motion.div
-      className="inv-event-card"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      className={`inv-timeline__item ${isRight ? 'inv-timeline__item--right' : 'inv-timeline__item--left'}`}
+      initial={{ opacity: 0, x: isRight ? 40 : -40 }}
+      whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.55, delay: index * 0.12 }}
+      transition={{ duration: 0.55, delay: index * 0.1 }}
     >
-      <div className="inv-event-card__icon">{icon}</div>
-      <h3 className="inv-event-card__title">{title}</h3>
-      {date && <p className="inv-event-card__date">{formatDate(date)}</p>}
-      {time && <p className="inv-event-card__time">{time}</p>}
-      {hasVenue && (
-        <button
-          className="inv-event-card__venue-btn"
-          onClick={() => openMap(venue, address)}
-          title="Open in Google Maps"
-        >
-          <span className="inv-event-card__venue-pin">📍</span>
-          <span>
-            <span className="inv-event-card__venue">{venue}</span>
-            {address && <span className="inv-event-card__address">{address}</span>}
-          </span>
-          <span className="inv-event-card__map-hint">View map ↗</span>
-        </button>
-      )}
+      <div className="inv-timeline__dot">
+        <span className="inv-timeline__dot-icon">{icon}</span>
+      </div>
+
+      <div className="inv-timeline__card">
+        <h3 className="inv-timeline__card-title">{title}</h3>
+        {date && <p className="inv-timeline__card-date">{formatDate(date)}</p>}
+        {time && <p className="inv-timeline__card-time">{time}</p>}
+        {hasVenue && (
+          <button
+            className="inv-timeline__card-venue"
+            onClick={() => openMap(venue, address)}
+            title="Open in Google Maps"
+          >
+            <span className="inv-timeline__card-pin">📍</span>
+            <span className="inv-timeline__card-venue-text">
+              <span className="inv-timeline__card-venue-name">{venue}</span>
+              {address && <span className="inv-timeline__card-venue-addr">{address}</span>}
+            </span>
+            <span className="inv-timeline__card-map-hint">View map ↗</span>
+          </button>
+        )}
+      </div>
     </motion.div>
   )
 }
@@ -44,21 +50,11 @@ export default function EventsSection({ data }) {
   const events = []
 
   if (data.mehendi && data.mehendiDate) {
-    events.push({
-      icon: '🌿',
-      title: 'Henna Ceremony',
-      date: data.mehendiDate,
-      time: data.mehendiTime,
-    })
+    events.push({ icon: '🌿', title: 'Henna Ceremony', date: data.mehendiDate, time: data.mehendiTime })
   }
 
   if (data.haldi && data.haldiDate) {
-    events.push({
-      icon: '💛',
-      title: 'Turmeric Ceremony',
-      date: data.haldiDate,
-      time: data.haldiTime,
-    })
+    events.push({ icon: '💛', title: 'Turmeric Ceremony', date: data.haldiDate, time: data.haldiTime })
   }
 
   events.push({
@@ -78,6 +74,14 @@ export default function EventsSection({ data }) {
       time: data.receptionTime,
       venue: data.receptionVenue,
       address: data.receptionAddress,
+    })
+  }
+
+  if (data.customEvents?.length) {
+    data.customEvents.forEach(ev => {
+      if (ev.title) {
+        events.push({ icon: ev.icon || '✦', title: ev.title, date: ev.date, time: ev.time, venue: ev.venue, address: ev.address })
+      }
     })
   }
 
@@ -104,9 +108,9 @@ export default function EventsSection({ data }) {
           Join Us in the Festivities
         </motion.h2>
 
-        <div className="inv-events__grid">
+        <div className="inv-timeline">
           {events.map((ev, i) => (
-            <EventCard key={ev.title} {...ev} index={i} />
+            <TimelineItem key={`${ev.title}-${i}`} {...ev} index={i} />
           ))}
         </div>
       </div>
